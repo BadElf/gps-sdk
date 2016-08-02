@@ -1,0 +1,10 @@
+<!--
+  -
+  -  Copyright (C) 2016 Bad Elf, LLC. All Rights Reserved.
+  -  See LICENSE.txt for this sample's licensing information
+  -
+  -->
+
+<resources>
+    <string name="app_name">Bad Elf Gps Sample</string>
+</resources>

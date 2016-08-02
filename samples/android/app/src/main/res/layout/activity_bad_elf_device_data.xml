@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  -
+  -  Copyright (C) 2016 Bad Elf, LLC. All Rights Reserved.
+  -  See LICENSE.txt for this sample's licensing information
+  -
+  -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".BadElfDeviceDataActivity">
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/ConnectDisconnectButton"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:minHeight="0dp"
+        android:layout_marginBottom="5dp"
+        android:enabled="false"
+     />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/badElfGpsServiceState"
+        android:id="@+id/StateLabel"
+        android:labelFor="@+id/State"
+        android:layout_toRightOf="@+id/ConnectDisconnectButton"
+        android:layout_alignBaseline="@id/ConnectDisconnectButton"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="3dp"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/State"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_toRightOf="@id/StateLabel"
+        android:layout_alignBaseline="@id/StateLabel" />
+
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/badElfGpsRequestIncludeSatellites"
+        android:id="@+id/Satellite"
+        android:layout_below="@+id/ConnectDisconnectButton"
+        android:layout_alignParentLeft="true"
+        android:labelFor="@+id/SatelliteButtons" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_below="@+id/Satellite"
+        android:weightSum="5"
+        android:id="@+id/SatelliteButtons">
+
+        <include layout="@layout/request_button"/>
+        <include layout="@layout/request_button"/>
+        <include layout="@layout/request_button"/>
+        <include layout="@layout/request_button"/>
+        <include layout="@layout/request_button"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/badElfGpsRequestNoSatellites"
+        android:id="@+id/NoSatellites"
+        android:layout_below="@+id/SatelliteButtons"
+         />
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/NoSatellites"
+        android:layout_marginLeft="10dp"
+        android:weightSum="5"
+        android:id="@+id/NoSatelliteButtons">
+
+        <include layout="@layout/request_button"/>
+        <include layout="@layout/request_button"/>
+        <include layout="@layout/request_button"/>
+        <include layout="@layout/request_button"/>
+        <include layout="@layout/request_button"/>
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:singleLine="false"
+        android:maxLines="100"
+        android:scrollbars="vertical"
+        android:id="@+id/receivedData"
+        android:layout_below="@+id/NoSatelliteButtons"
+        android:layout_marginTop="2dp"
+        android:padding="2dp"
+        android:background="@drawable/back"
+        android:freezesText="true"
+         />
+
+
+</RelativeLayout>
