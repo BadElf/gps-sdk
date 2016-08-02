@@ -1,5 +1,5 @@
 <h3 align="center">
-  <img src="assets/img/sdk-logo.png" alt="bad-elf-sdk-logo" />
+  <img src="http://epo.bad-elf.com/sdk-logo.png" alt="bad-elf-sdk-logo" />
 </h3>
 
 # Bad Elf GPS SDK
