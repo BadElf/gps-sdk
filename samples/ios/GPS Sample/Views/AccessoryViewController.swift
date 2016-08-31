@@ -9,10 +9,13 @@
 import UIKit
 
 class AccessoryViewController: UITableViewController {
+    
+    let sessionController = SessionController.sharedController
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        title = sessionController._accessory?.modelNumber
     }
 
     override func didReceiveMemoryWarning() {
@@ -27,13 +30,35 @@ class AccessoryViewController: UITableViewController {
     }
 
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 0
+        return 5
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("reuseIdentifier", forIndexPath: indexPath)
+        let cell = tableView.dequeueReusableCellWithIdentifier("AccessoryCell", forIndexPath: indexPath)
 
         // Configure the cell...
+        
+        switch indexPath.row {
+        case 0:
+            cell.textLabel?.text = "Name"
+            cell.detailTextLabel?.text = sessionController._accessory?.name
+        case 1:
+            cell.textLabel?.text = "Model #"
+            cell.detailTextLabel?.text = sessionController._accessory?.modelNumber
+        case 2:
+            cell.textLabel?.text = "Serial #"
+            cell.detailTextLabel?.text = sessionController._accessory?.serialNumber
+        case 3:
+            cell.textLabel?.text = "Hardware"
+            cell.detailTextLabel?.text = sessionController._accessory?.hardwareRevision
+        case 4:
+            cell.textLabel?.text = "Firmware"
+            cell.detailTextLabel?.text = sessionController._accessory?.firmwareRevision
+            
+        default:
+            cell.textLabel?.text = ""
+            cell.detailTextLabel?.text = ""
+        }
 
         return cell
     }
