@@ -7,7 +7,7 @@
 
 [![Twitter: @bad_elf](https://img.shields.io/badge/contact-@bad__elf-blue.svg?style=flat)](https://twitter.com/bad_elf)
 ![](https://img.shields.io/badge/license-BSD--New-green.svg)
-![](https://img.shields.io/badge/version-v1.0.1-blue.svg)
+![](https://img.shields.io/badge/version-v1.0.2-blue.svg)
 
 Bad Elf is excited to provide developers with the protocol information and sample code to communicate with Bad Elf GPS accessories across many platforms. This SDK provides real-time and native support for the wide range of data and configurations that each Bad Elf GPS accessory supports. 
 
@@ -47,7 +47,7 @@ This SDK works with all of the Bad Elf GPS accessories listed below.  The minimu
 | Bad Elf GNSS Surveyor | BE-GPS-3300 | v2.1.40 | Bluetooth, USB         |
 
 
-> If your app detects a Bad Elf GPS accessory with older firmware, you should prompt the user to perform a firmware update using the official [Bad Elf GPS App (iOS only)](https://itunes.apple.com/us/app/bad-elf-gps/id391764718?mt=8&uo=4&at=10I4Go). For non-iOS apps and users, you can point them to our [instructions for upgrading Bad Elf GPS accessories via USB](#).  This only applies to the accessories with USB connectivity as shown above.
+> If your app detects a Bad Elf GPS accessory with older firmware, you should prompt the user to perform a firmware update using the official [Bad Elf GPS App (iOS only)](https://itunes.apple.com/us/app/bad-elf-gps/id391764718?mt=8&uo=4&at=10I4Go). For non-iOS apps and users, you can point Bad Elf GPS Pro+ users to our [instructions for upgrading Bad Elf GPS Pro+ accessories via USB](https://badelf.freshdesk.com/support/solutions/articles/5000698434-update-the-firmware-directly-with-the-usb-port). And for Bad Elf Surveyor users, you can point them to these [instructions for upgrading Bad Elf Surveyor accessories via USB](https://badelf.freshdesk.com/support/solutions/articles/5000712939-update-the-firmware-directly-with-the-usb-port).  This only applies to the accessories with USB connectivity as shown above.
 
 ## Basic Configuration (iOS)
 Bad Elf accessories are certified Apple MFi accessories which means there is a bit more setup with Apple devices. In order to start the flow of raw NMEA data into your app, you must first include the `ExternalAccessory.framework` into your iOS app.
@@ -132,7 +132,7 @@ A sample sentence:
 $BADELF,Bad Elf GPS Pro+,BE-GPS-2300,2.1.39,8.0.0,100015,Bad Elf GPS Pro+*7E
 ```
 
-An app can also request this information as any time by sending the following binary packet to the accessory:
+An app can also request this information at any time by sending the following binary packet to the accessory:
 
 ```
 24 be 00 0a 01 00 08 0b 0d 0a
