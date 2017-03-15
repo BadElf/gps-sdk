@@ -14,14 +14,14 @@ Bad Elf is excited to provide developers with the protocol information and sampl
 We strongly suggest developers review all the information contained here before starting to integrate the protocol or sample code into your application.
 
 ## Bad Elf Protocol Features
-              |  Bad Elf
---------------|------------------------------------------------------------
-:rocket: 	  | Fast and reliable positional data at 1-10Hz update rate
-:wrench:   | Access extended satellite and accuracy information not available elsewhere
-:computer: | Support for iOS, Android, Windows, and any other platform via Bluetooth SPP
-:book:     | No binary SDK to integrate into your app
-:pencil2:  | Uses industry-standard NMEA sentences
-:octocat:  | Frequent firmware updates and rapid support responses
+|---| Bad Elf |
+|---|---------|
+|:rocket: 	  | Fast and reliable positional data at 1-10Hz update rate |
+|:wrench:   | Access extended satellite and accuracy information not available elsewhere
+|:computer: | Support for iOS, Android, Windows, and any other platform via Bluetooth SPP
+|:book:     | No binary SDK to integrate into your app
+|:pencil2:  | Uses industry-standard NMEA sentences
+|:octocat:  | Frequent firmware updates and rapid support responses
 
 
 ## Supported Platforms & Requirements
@@ -40,7 +40,7 @@ This SDK works with all of the Bad Elf GPS accessories listed below.  The minimu
 
 | Model Name             | Model      | Minimum Firmware Version | Connectivity    |
 |------------------------|------------|--------------------------|---------------- |
-| Bad Elf GPS for 30-pin    | BE-GPS-1000 | v1.3.14 | iOS only via EA    | 
+| Bad Elf GPS for 30-pin    | BE-GPS-1000 | Not Supported | ---    | 
 | Bad Elf GPS for Lightning | BE-GPS-1008 | v1.0.20 | iOS only via EA    |
 | Bad Elf GPS Pro | BE-GPS-2200 | v2.0.90 | Bluetooth         |
 | Bad Elf GPS Pro+ | BE-GPS-2300 | v2.1.40 | Bluetooth, USB         |
@@ -115,7 +115,7 @@ For non-iOS Bluetooth clients, we provide the same metadata via a custom `$BADEL
 The NMEA sentence is in the following format:
 
 ```
-$BADELF,
+$PELFID,
 <model name>,
 <model number>,
 <firmware version (AA.BB.CC)>,
@@ -129,7 +129,7 @@ $BADELF,
 A sample sentence:
 
 ```
-$BADELF,Bad Elf GPS Pro+,BE-GPS-2300,2.1.39,8.0.0,100015,Bad Elf GPS Pro+*7E
+$PELFID,Bad Elf GPS Pro,BE-GPS-2200,2.0.87,2.1.0,123456,2200-2.0C-DEV*71
 ```
 
 An app can also request this information at any time by sending the following binary packet to the accessory:
