@@ -8,6 +8,19 @@
 
 import UIKit
 import ExternalAccessory
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
+
 
 class DetectionTableViewController: UITableViewController {
 
@@ -19,22 +32,22 @@ class DetectionTableViewController: UITableViewController {
         super.viewDidLoad()
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(accessoryDidConnect), name: EAAccessoryDidConnectNotification, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(accessoryDidDisconnect), name: EAAccessoryDidDisconnectNotification, object: nil)
-        EAAccessoryManager.sharedAccessoryManager().registerForLocalNotifications()
+        NotificationCenter.default.addObserver(self, selector: #selector(accessoryDidConnect), name: NSNotification.Name.EAAccessoryDidConnect, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(accessoryDidDisconnect), name: NSNotification.Name.EAAccessoryDidDisconnect, object: nil)
+        EAAccessoryManager.shared().registerForLocalNotifications()
         
         sessionController = SessionController.sharedController
-        accessoryList = EAAccessoryManager.sharedAccessoryManager().connectedAccessories
+        accessoryList = EAAccessoryManager.shared().connectedAccessories
         
         super.viewWillAppear(animated)
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: EAAccessoryDidConnectNotification, object: nil)
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: EAAccessoryDidDisconnectNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.EAAccessoryDidConnect, object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.EAAccessoryDidDisconnect, object: nil)
         
         super.viewWillDisappear(animated)
     }
@@ -46,16 +59,16 @@ class DetectionTableViewController: UITableViewController {
 
     // MARK: - Table view data source
 
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
 
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return accessoryList!.count
     }
 
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("AccessoryCell", forIndexPath: indexPath)
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "AccessoryCell", for: indexPath)
 
         // Configure the cell...
         
@@ -69,55 +82,55 @@ class DetectionTableViewController: UITableViewController {
         return cell
     }
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         selectedAccessory = accessoryList![indexPath.row]
         
         sessionController.setupController(forAccessory: selectedAccessory!, withProtocolString: (selectedAccessory?.protocolStrings[0])!)
         
-        performSegueWithIdentifier("showAccessoryConfig", sender: nil)
+        performSegue(withIdentifier: "showAccessoryConfig", sender: nil)
         
-        tableView.deselectRowAtIndexPath(indexPath, animated: true)
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 
     
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
     }
     
     // MARK: - EAAccessoryNotification Handlers
     
-    func accessoryDidConnect(notificaton: NSNotification) {
+    func accessoryDidConnect(_ notificaton: Notification) {
         let connectedAccessory = notificaton.userInfo![EAAccessoryKey]
         accessoryList?.append(connectedAccessory as! EAAccessory)
         
-        let indexPath = NSIndexPath(forRow: (accessoryList!.count - 1), inSection: 0)
-        tableView.insertRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
+        let indexPath = IndexPath(row: (accessoryList!.count - 1), section: 0)
+        tableView.insertRows(at: [indexPath], with: .automatic)
     }
     
-    func accessoryDidDisconnect(notification: NSNotification) {
+    func accessoryDidDisconnect(_ notification: Notification) {
         let disconnectedAccessory = notification.userInfo![EAAccessoryKey]
         
-        if selectedAccessory != nil && disconnectedAccessory?.connectionID == selectedAccessory?.connectionID {
+        if selectedAccessory != nil && (disconnectedAccessory as AnyObject).connectionID == selectedAccessory?.connectionID {
             
         }
         
         var disconnectedAccessoryIndex = 0
         for accessory in accessoryList! {
-            if disconnectedAccessory?.connectionID == accessory.connectionID {
+            if (disconnectedAccessory as AnyObject).connectionID == accessory.connectionID {
                 break
             }
             disconnectedAccessoryIndex += 1
         }
         
         if disconnectedAccessoryIndex < accessoryList?.count {
-            accessoryList?.removeAtIndex(disconnectedAccessoryIndex)
-            let indexPath = NSIndexPath(forRow: disconnectedAccessoryIndex, inSection: 0)
-            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Right)
+            accessoryList?.remove(at: disconnectedAccessoryIndex)
+            let indexPath = IndexPath(row: disconnectedAccessoryIndex, section: 0)
+            tableView.deleteRows(at: [indexPath], with: .right)
         } else {
             print("Could not find disconnected accessories in list")
         }
