@@ -8,8 +8,43 @@
 
 import UIKit
 import ExternalAccessory
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
 
-class SessionController: NSObject, EAAccessoryDelegate, NSStreamDelegate {
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func >= <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l >= r
+  default:
+    return !(lhs < rhs)
+  }
+}
+
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l > r
+  default:
+    return rhs < lhs
+  }
+}
+
+
+class SessionController: NSObject, EAAccessoryDelegate, StreamDelegate {
 
     static let sharedController = SessionController()
     var _accessory: EAAccessory?
@@ -34,11 +69,11 @@ class SessionController: NSObject, EAAccessoryDelegate, NSStreamDelegate {
         
         if _session != nil {
             _session?.inputStream?.delegate = self
-            _session?.inputStream?.scheduleInRunLoop(NSRunLoop.currentRunLoop(), forMode: NSDefaultRunLoopMode)
+            _session?.inputStream?.schedule(in: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
             _session?.inputStream?.open()
             
             _session?.outputStream?.delegate = self
-            _session?.outputStream?.scheduleInRunLoop(NSRunLoop.currentRunLoop(), forMode: NSDefaultRunLoopMode)
+            _session?.outputStream?.schedule(in: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
             _session?.outputStream?.open()
         } else {
             print("Failed to create session")
@@ -50,11 +85,11 @@ class SessionController: NSObject, EAAccessoryDelegate, NSStreamDelegate {
     func closeSession() {
         
         _session?.inputStream?.close()
-        _session?.inputStream?.removeFromRunLoop(NSRunLoop.currentRunLoop(), forMode: NSDefaultRunLoopMode)
+        _session?.inputStream?.remove(from: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
         _session?.inputStream?.delegate = nil
         
         _session?.outputStream?.close()
-        _session?.outputStream?.removeFromRunLoop(NSRunLoop.currentRunLoop(), forMode: NSDefaultRunLoopMode)
+        _session?.outputStream?.remove(from: RunLoop.current, forMode: RunLoopMode.defaultRunLoopMode)
         _session?.outputStream?.delegate = nil
         
         _session = nil
@@ -64,22 +99,22 @@ class SessionController: NSObject, EAAccessoryDelegate, NSStreamDelegate {
     
     // MARK: Write & Read Data
     
-    func writeData(data: NSData) {
+    func writeData(_ data: Data) {
         if _writeData == nil {
             _writeData = NSMutableData()
         }
         
-        _writeData?.appendData(data)
+        _writeData?.append(data)
         self.writeData()
     }
     
-    func readData(bytesToRead: Int) -> NSData {
+    func readData(_ bytesToRead: Int) -> Data {
         
-        var data: NSData?
+        var data: Data?
         if _readData?.length >= bytesToRead {
             let range = NSMakeRange(0, bytesToRead)
-            data = _readData?.subdataWithRange(range)
-            _readData?.replaceBytesInRange(range, withBytes: nil, length: 0)
+            data = _readData?.subdata(with: range)
+            _readData?.replaceBytes(in: range, withBytes: nil, length: 0)
         }
         
         return data!
@@ -92,58 +127,58 @@ class SessionController: NSObject, EAAccessoryDelegate, NSStreamDelegate {
     // MARK: - Helpers
     func updateReadData() {
         let bufferSize = 128
-        var buffer = [UInt8](count: bufferSize, repeatedValue: 0)
+        var buffer = [UInt8](repeating: 0, count: bufferSize)
         
         while _session?.inputStream?.hasBytesAvailable == true {
             let bytesRead = _session?.inputStream?.read(&buffer, maxLength: bufferSize)
             if _readData == nil {
                 _readData = NSMutableData()
             }
-            _readData?.appendBytes(buffer, length: bytesRead!)
-            _dataAsString = NSString(bytes: buffer, length: bytesRead!, encoding: NSUTF8StringEncoding)
-            NSNotificationCenter.defaultCenter().postNotificationName("BESessionDataReceivedNotification", object: nil)
+            _readData?.append(buffer, length: bytesRead!)
+            _dataAsString = NSString(bytes: buffer, length: bytesRead!, encoding: String.Encoding.utf8.rawValue)
+            NotificationCenter.default.post(name: Notification.Name(rawValue: "BESessionDataReceivedNotification"), object: nil)
         }
     }
     
-    private func writeData() {
+    fileprivate func writeData() {
         while _session?.outputStream?.hasSpaceAvailable == true && _writeData?.length > 0 {
-            var buffer = [UInt8](count: _writeData!.length, repeatedValue: 0)
+            var buffer = [UInt8](repeating: 0, count: _writeData!.length)
             _writeData?.getBytes(&buffer, length: (_writeData?.length)!)
             let bytesWritten = _session?.outputStream?.write(&buffer, maxLength: _writeData!.length)
             if bytesWritten == -1 {
                 print("Write Error")
                 return
             } else if bytesWritten > 0 {
-                _writeData?.replaceBytesInRange(NSMakeRange(0, bytesWritten!), withBytes: nil, length: 0)
+                _writeData?.replaceBytes(in: NSMakeRange(0, bytesWritten!), withBytes: nil, length: 0)
             }
         }
     }
     
     // MARK: - EAAcessoryDelegate
     
-    func accessoryDidDisconnect(accessory: EAAccessory) {
+    func accessoryDidDisconnect(_ accessory: EAAccessory) {
         // Accessory diconnected from iOS, updating accordingly
     }
     
     // MARK: - NSStreamDelegateEventExtensions
     
-    func stream(aStream: NSStream, handleEvent eventCode: NSStreamEvent) {
+    func stream(_ aStream: Stream, handle eventCode: Stream.Event) {
         switch eventCode {
-        case NSStreamEvent.None:
+        case Stream.Event():
             break
-        case NSStreamEvent.OpenCompleted:
+        case Stream.Event.openCompleted:
             break
-        case NSStreamEvent.HasBytesAvailable:
+        case Stream.Event.hasBytesAvailable:
             // Read Data
             updateReadData()
             break
-        case NSStreamEvent.HasSpaceAvailable:
+        case Stream.Event.hasSpaceAvailable:
             // Write Data
             self.writeData()
             break
-        case NSStreamEvent.ErrorOccurred:
+        case Stream.Event.errorOccurred:
             break
-        case NSStreamEvent.EndEncountered:
+        case Stream.Event.endEncountered:
             break
             
         default:
