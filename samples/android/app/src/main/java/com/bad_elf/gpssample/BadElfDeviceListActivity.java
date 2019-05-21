@@ -18,6 +18,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bad_elf.badelfgps.BadElfDevice;
+import com.bad_elf.badelfgps.BadElfRemoteController;
 
 import java.util.List;
 
@@ -26,6 +27,7 @@ import java.util.List;
  */
 public class BadElfDeviceListActivity extends AppCompatActivity {
     private static final String TAG = "BadElfDeviceListActvty";
+    private static BadElfRemoteController remoteController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +36,6 @@ public class BadElfDeviceListActivity extends AppCompatActivity {
 
         final ListView listView = (ListView) findViewById(R.id.listView);
 
-
         try {
             List<BadElfDevice> badElfDevices = BadElfDevice.getPairedBadElfDevices(this);
             final ArrayAdapter<BadElfDevice> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, badElfDevices);
@@ -42,13 +43,15 @@ public class BadElfDeviceListActivity extends AppCompatActivity {
             listView.setAdapter(adapter);
             listView.setOnItemClickListener(listener);
 
+            remoteController = new BadElfRemoteController();
+            remoteController.setDeviceList(badElfDevices);
+            remoteController.start();
         } catch (RuntimeException e) {
             // Errors: Bluetooth not enabled or no paired Bad Elf Devices
             final TextView errorMessage = (TextView) findViewById(R.id.ErrorMessage);
             listView.setVisibility(View.GONE);
             errorMessage.setText(e.getMessage());
             errorMessage.setVisibility(View.VISIBLE);
-
         }
 
 

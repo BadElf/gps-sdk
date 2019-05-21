@@ -70,6 +70,7 @@ public class BadElfService extends Service {
     private OutputStream outStream;
     private final Object stateSync = new Object();
     private Thread serviceThread;
+    private BadElfRemoteController remoteController;
 
     /**
      * Start the Service
@@ -216,6 +217,10 @@ public class BadElfService extends Service {
                 device = badElfDevice.getDevice();
             }
         }
+    }
+
+    protected void setBadElfRemoteController(BadElfRemoteController remoteController) {
+        this.remoteController = remoteController;
     }
 
 
@@ -416,11 +421,22 @@ public class BadElfService extends Service {
      *     sniff mode.
      */
     private final Runnable pingTask = new Runnable() {
-
         @Override
         public void run() {
-
-            sendData(pingJunk);
+//            try {
+//                outStream.write(data);   // send data to Bad Elf Device
+//            } catch (IOException | NullPointerException e) {
+//                // Errors will cause us to disconnect
+//                // We will not propagate the errors here. The calls to onStateChanged will be the
+//                // notification of the error.
+//                try {
+//                    disconnect();
+//                } catch (NotYetConnectedException ignore) {
+//                    // If the IOException or NullPointerException was caused because we are
+//                    // disconnecting, then calling disconnect will throw NotYetConnectedException
+//                    // that we don't want to propagate.
+//                }
+//            }
         }
     };
 }

@@ -124,6 +124,7 @@ public class BadElfGpsConnection {
      */
 
     public void  setBadElfDevice(BadElfDevice badElfDevice) {        ifBadElfServiceIsBound().setBadElfDevice((badElfDevice)); }
+    public void  setBadElfRemoteController(BadElfRemoteController remoteController) {        ifBadElfServiceIsBound().setBadElfRemoteController((remoteController)); }
     public void  connect()                                  {        ifBadElfServiceIsBound().connect();                       }
     public void  sendData(final byte[] data)                {        ifBadElfServiceIsBound().sendData(data);                  }
     public void  disconnect()                               {        ifBadElfServiceIsBound().disconnect();                    }

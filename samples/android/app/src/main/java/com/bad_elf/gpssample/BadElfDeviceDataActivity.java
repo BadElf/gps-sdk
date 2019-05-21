@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.bad_elf.badelfgps.BadElfDevice;
+import com.bad_elf.badelfgps.BadElfRemoteController;
 import com.bad_elf.badelfgps.BadElfService.State;
 import com.bad_elf.badelfgps.BadElfGpsConnection;
 import com.bad_elf.badelfgps.BadElfGpsConnectionObserver;
@@ -48,12 +49,16 @@ public class BadElfDeviceDataActivity extends AppCompatActivity implements BadEl
 
     private BadElfDevice badElfDevice;  // The Bad Elf device we will communicate with
     private BadElfGpsConnection badElfConnection;
+    private BadElfRemoteController remoteControl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         badElfDevice = getIntent().getParcelableExtra(BadElfDevice.TAG);
+
+        remoteControl = getIntent().getParcelableExtra(BadElfRemoteController.TAG);
+        remoteControl.setSelectedDevice(badElfDevice);
 
         assert getSupportActionBar() != null;
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -274,6 +279,9 @@ public class BadElfDeviceDataActivity extends AppCompatActivity implements BadEl
      */
     @Override // this is a method of the BadElfGpsConnectionObserver
     public void onDataReceived(final byte[] data){
+
+        Log.d(TAG, String.format("RX bytes: %d", data.length));
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {

@@ -60,9 +60,14 @@ public class BadElfDevice implements Parcelable {
             if( device.getName().startsWith("Bad Elf") ) {
                 result.add(new BadElfDevice(device));
             }
+
+            Log.d(TAG,String.format(Locale.US,"Name: %s", device.getName()));
+            Log.d(TAG,String.format(Locale.US,"\tAddress: %s", device.getAddress()));
+            Log.d(TAG,String.format(Locale.US,"\tClass: %s", device.getBluetoothClass().toString()));
+            Log.d(TAG,String.format(Locale.US,"\tType: %d", device.getType()));
         }
 
-        if( result.isEmpty()){
+        if(result.isEmpty()){
             throw new IllegalStateException(context.getString(R.string.badElfGpsErrorNoPairedDevices));
         }
 
