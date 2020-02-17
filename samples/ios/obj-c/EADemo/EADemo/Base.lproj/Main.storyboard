@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="kxw-hH-Ftv">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+    </dependencies>
+    <scenes>
+        <!--Accessories-->
+        <scene sceneID="Nla-9c-CbC">
+            <objects>
+                <tableViewController id="nVX-HB-IKp" customClass="RootViewController" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="BM5-Wo-gie">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <connections>
+                            <outlet property="dataSource" destination="nVX-HB-IKp" id="0s9-62-f22"/>
+                            <outlet property="delegate" destination="nVX-HB-IKp" id="Dnt-tI-ECA"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Accessories" id="WcW-OO-YgV"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="k4u-NZ-rLQ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1062" y="478"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="1OD-Cm-od2">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="kxw-hH-Ftv" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="qZz-kU-aiO">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="nVX-HB-IKp" kind="relationship" relationship="rootViewController" id="din-pz-cbf"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ben-ZI-5TA" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="250" y="478"/>
+        </scene>
+        <!--Session Transfer View Controller-->
+        <scene sceneID="evw-NK-Ry2">
+            <objects>
+                <viewController storyboardIdentifier="EADSessionTransfer" useStoryboardIdentifierAsRestorationIdentifier="YES" id="cuW-bU-LcT" customClass="EADSessionTransferViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="bnP-JW-C2K"/>
+                        <viewControllerLayoutGuide type="bottom" id="7Xv-Bg-DO4"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="WHv-yd-Dpm">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter a string to send" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="N3U-zI-BBe">
+                                <rect key="frame" x="228" y="136" width="145" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="ZWk-2i-lri"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Helvetica-Bold" family="Helvetica" pointSize="12"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <button opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="csr-JW-iXU">
+                                <rect key="frame" x="235" y="202" width="130" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="130" id="2zM-aR-Xaf"/>
+                                    <constraint firstAttribute="height" constant="44" id="8yn-Zg-TM2"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Helvetica-Bold" family="Helvetica" pointSize="15"/>
+                                <state key="normal" title="Send Hex Data">
+                                    <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="sendHexButtonPressed:" destination="cuW-bU-LcT" eventType="touchUpInside" id="4G2-3l-Nwf"/>
+                                </connections>
+                            </button>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="g0Q-fE-BlF">
+                                <rect key="frame" x="180" y="438" width="241" height="21"/>
+                                <subviews>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="9qz-Nu-Aab">
+                                        <rect key="frame" x="0.0" y="0.0" width="241" height="21"/>
+                                        <subviews>
+                                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" text="Bytes Received from Session: 0" textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="8wO-Lc-f2y">
+                                                <rect key="frame" x="0.0" y="0.0" width="241" height="21"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                        </subviews>
+                                    </stackView>
+                                </subviews>
+                            </stackView>
+                            <button opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Kg2-oA-5gU">
+                                <rect key="frame" x="253" y="386" width="93" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="nMd-hO-NOq"/>
+                                    <constraint firstAttribute="width" constant="93" id="ovM-3l-9q3"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="Helvetica-Bold" family="Helvetica" pointSize="15"/>
+                                <state key="normal" title="Send 10K">
+                                    <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="send10KButtonPressed:" destination="cuW-bU-LcT" eventType="touchUpInside" id="Mae-lT-fi9"/>
+                                </connections>
+                            </button>
+                            <textField opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" contentHorizontalAlignment="fill" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="0123456789ABCDEF" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="efm-pX-8v7">
+                                <rect key="frame" x="230" y="254" width="141" height="30"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="fnu-q1-Sjy"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="n5a-NH-cxq">
+                                <rect key="frame" x="245" y="75" width="85" height="30"/>
+                                <subviews>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="fK3-bY-by9">
+                                        <rect key="frame" x="0.0" y="0.0" width="85" height="30"/>
+                                        <subviews>
+                                            <button opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cih-a9-SdG">
+                                                <rect key="frame" x="0.0" y="0.0" width="85" height="30"/>
+                                                <fontDescription key="fontDescription" name="Helvetica-Bold" family="Helvetica" pointSize="15"/>
+                                                <state key="normal" title="Send String">
+                                                    <color key="titleShadowColor" red="0.5" green="0.5" blue="0.5" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                </state>
+                                                <connections>
+                                                    <action selector="sendStringButtonPressed:" destination="cuW-bU-LcT" eventType="touchUpInside" id="GYA-da-25F"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                    </stackView>
+                                </subviews>
+                            </stackView>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" text="Stress Test" textAlignment="center" lineBreakMode="tailTruncation" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="t8c-5K-qAj">
+                                <rect key="frame" x="253" y="328" width="95" height="34"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="34" id="JbC-8g-qYf"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="t8c-5K-qAj" firstAttribute="leading" secondItem="Kg2-oA-5gU" secondAttribute="leading" id="1dV-OT-LFq"/>
+                            <constraint firstItem="t8c-5K-qAj" firstAttribute="centerX" secondItem="WHv-yd-Dpm" secondAttribute="centerX" id="4Xq-iw-Owt"/>
+                            <constraint firstItem="N3U-zI-BBe" firstAttribute="centerX" secondItem="WHv-yd-Dpm" secondAttribute="centerX" id="EPq-m6-uqr"/>
+                            <constraint firstItem="efm-pX-8v7" firstAttribute="top" secondItem="csr-JW-iXU" secondAttribute="bottom" constant="8" symbolic="YES" id="LHK-az-uz5"/>
+                            <constraint firstItem="Kg2-oA-5gU" firstAttribute="centerX" secondItem="WHv-yd-Dpm" secondAttribute="centerX" id="TX1-lL-3DF"/>
+                            <constraint firstItem="g0Q-fE-BlF" firstAttribute="top" secondItem="Kg2-oA-5gU" secondAttribute="bottom" constant="8" symbolic="YES" id="XoT-e6-h6f"/>
+                            <constraint firstItem="csr-JW-iXU" firstAttribute="centerX" secondItem="WHv-yd-Dpm" secondAttribute="centerX" id="jw9-xx-AlK"/>
+                            <constraint firstItem="t8c-5K-qAj" firstAttribute="top" secondItem="efm-pX-8v7" secondAttribute="bottom" constant="44" id="lT2-0Z-zIj"/>
+                            <constraint firstItem="N3U-zI-BBe" firstAttribute="top" secondItem="n5a-NH-cxq" secondAttribute="bottom" constant="31" id="lgq-1u-jUz"/>
+                            <constraint firstItem="g0Q-fE-BlF" firstAttribute="centerX" secondItem="WHv-yd-Dpm" secondAttribute="centerX" id="pwJ-UW-o6k"/>
+                            <constraint firstItem="n5a-NH-cxq" firstAttribute="top" secondItem="bnP-JW-C2K" secondAttribute="bottom" constant="55" id="sD9-eS-GHP"/>
+                            <constraint firstItem="Kg2-oA-5gU" firstAttribute="top" secondItem="t8c-5K-qAj" secondAttribute="bottom" constant="24" id="svG-lQ-KTg"/>
+                            <constraint firstItem="n5a-NH-cxq" firstAttribute="centerX" secondItem="WHv-yd-Dpm" secondAttribute="centerX" constant="-12.5" id="vS6-Ew-5Oh"/>
+                            <constraint firstItem="efm-pX-8v7" firstAttribute="centerX" secondItem="WHv-yd-Dpm" secondAttribute="centerX" id="xYR-av-AFH"/>
+                            <constraint firstItem="csr-JW-iXU" firstAttribute="top" secondItem="N3U-zI-BBe" secondAttribute="bottom" constant="36" id="zTq-KG-xLS"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="hexToSendText" destination="efm-pX-8v7" id="xc3-7k-K43"/>
+                        <outlet property="receivedBytesCountLabel" destination="8wO-Lc-f2y" id="nAY-G7-KUF"/>
+                        <outlet property="stringToSendText" destination="N3U-zI-BBe" id="ABA-w6-jMa"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Ouy-fS-LNB" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="743" y="1200"/>
+        </scene>
+    </scenes>
+</document>
