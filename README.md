@@ -74,7 +74,7 @@ If you are developing an app for use on Apple iOS devices (iPhone, iPad, iPod to
 ### Whitelisting Process
 The process to get your app whitelisted by Bad Elf is relatively easy. At least a week before you are ready to submit your app build to iTunes Connect, please follow these instructions:
 
-1. Complete and submit our [Bad Elf SDK Whitelist Request](http://goo.gl/forms/kuOxVHRXYV) form.
+1. Complete and submit our [Bad Elf SDK Whitelist Request](https://docs.google.com/forms/d/1kPgM9wgm5tlqAPENHDjWiO3OOugzkY9sQxrPoYhEYrE/viewform?edit_requested=true) form.
 2. Within 24-48 hours you will receive a confirmation email that your information has been received and is being processed by Bad Elf.
 3. Within a week we will confirm that your app has been whitelisted and provide you with the necessary information you'll need to include with your app submission to iTunes Connect.
 4. You are ready submit your app for review by Apple.
