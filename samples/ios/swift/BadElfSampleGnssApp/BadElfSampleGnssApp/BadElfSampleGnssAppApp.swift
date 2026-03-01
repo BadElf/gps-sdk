@@ -16,9 +16,11 @@ struct NmeaData: Identifiable {
     var fixType: String?
     var horizontalAccuracy: Double? // Computed from GST
     var hDOP: Double?
+    var integrityIntStatus: Int?
+    var integrityStatus: String?
 
     static var empty: NmeaData {
-        NmeaData(timestamp: nil, date: nil, latitude: nil, longitude: nil, altitude: nil, speed: nil, course: nil, fixType: nil, horizontalAccuracy: nil, hDOP: nil)
+        NmeaData(timestamp: nil, date: nil, latitude: nil, longitude: nil, altitude: nil, speed: nil, course: nil, fixType: nil, horizontalAccuracy: nil, hDOP: nil, integrityIntStatus: nil, integrityStatus: nil)
     }
     
     // Check if the required core data is available
@@ -61,6 +63,8 @@ class BadElfReceiver: NSObject, ObservableObject, StreamDelegate {
     private var pendingGga: NmeaData?
     private var pendingRmc: NmeaData?
     private var pendingGst: NmeaData?
+    private var latestIntegrityIntStatus: Int?
+    private var latestIntegrityStatus: String?
     
     // Protocol strings
     private let primaryProtocol = "com.bad-elf.gnss"
@@ -190,6 +194,8 @@ class BadElfReceiver: NSObject, ObservableObject, StreamDelegate {
         pendingGga = nil
         pendingRmc = nil
         pendingGst = nil
+        latestIntegrityIntStatus = nil
+        latestIntegrityStatus = nil
         
         DispatchQueue.main.async {
             self.connectionStatus = "Disconnected"
@@ -255,7 +261,7 @@ class BadElfReceiver: NSObject, ObservableObject, StreamDelegate {
             let appId = (bundle.object(forInfoDictionaryKey: "CFBundleIdentifier") as? String) ?? "com.unknown.id"
             let appVersion = (bundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String) ?? "1.0"
             
-            let template = "$PBEJS,{\"method\":\"session\",\"params\":{\"appName\":\"APP_NAME\",\"appId\":\"APP_BUNDLE_ID\",\"appVersion\":\"APP_VERSION\",\"msgs\":\"NMEA\"}}\""
+            let template = "$PBEJS,{\"method\":\"session\",\"params\":{\"appName\":\"APP_NAME\",\"appId\":\"APP_BUNDLE_ID\",\"appVersion\":\"APP_VERSION\",\"msgs\":\"NMEA,PELFINT\"}}\""
             let rawString = template
                 .replacingOccurrences(of: "APP_NAME", with: appName)
                 .replacingOccurrences(of: "APP_BUNDLE_ID", with: appId)
@@ -356,7 +362,15 @@ class BadElfReceiver: NSObject, ObservableObject, StreamDelegate {
         let components = sentence.split(separator: ",", omittingEmptySubsequences: false).map { String($0) }
         
         guard let talkerAndType = components.first, components.count >= 2 else { return }
-        let sentenceType = String(talkerAndType.dropFirst(3)) // Remove '$G P' or similar
+        let rawHeader = talkerAndType.hasPrefix("$") ? String(talkerAndType.dropFirst()) : talkerAndType
+        let sentenceType: String
+        if rawHeader == "PELFINT" {
+            sentenceType = rawHeader
+        } else if rawHeader.count >= 3 {
+            sentenceType = String(rawHeader.suffix(3))
+        } else {
+            return
+        }
         
         switch sentenceType {
         case "GGA":
@@ -365,6 +379,17 @@ class BadElfReceiver: NSObject, ObservableObject, StreamDelegate {
             pendingRmc = NmeaParser.parseRmc(components)
         case "GST":
             pendingGst = NmeaParser.parseGst(components)
+        case "PELFINT":
+            if let parsedIntegrity = NmeaParser.parsePelfInt(components) {
+                latestIntegrityIntStatus = parsedIntegrity.integrityIntStatus
+                latestIntegrityStatus = parsedIntegrity.integrityStatus
+                DispatchQueue.main.async {
+                    var current = self.currentGnssData
+                    current.integrityIntStatus = parsedIntegrity.integrityIntStatus
+                    current.integrityStatus = parsedIntegrity.integrityStatus
+                    self.currentGnssData = current
+                }
+            }
         default:
             break // Ignore other sentences
         }
@@ -388,6 +413,8 @@ class BadElfReceiver: NSObject, ObservableObject, StreamDelegate {
                 completeData.speed = rmc.speed
                 completeData.course = rmc.course
                 completeData.horizontalAccuracy = gst.horizontalAccuracy
+                completeData.integrityIntStatus = latestIntegrityIntStatus
+                completeData.integrityStatus = latestIntegrityStatus
                 
                 DispatchQueue.main.async {
                     self.currentGnssData = completeData
@@ -529,6 +556,24 @@ struct NmeaParser {
             horizontalAccuracy: horizontalAccuracy
         )
     }
+
+    // Parses proprietary PELFINT sentence: $PELFINT,A,B
+    static func parsePelfInt(_ components: [String]) -> (integrityIntStatus: Int?, integrityStatus: String?)? {
+        guard components.count >= 3 else { return nil }
+        // Field A is second and field B is third. Ignore all trailing fields.
+        let statusIntField = components[1].split(separator: "*", maxSplits: 1, omittingEmptySubsequences: false).first.map(String.init) ?? ""
+        let statusField = components[2].split(separator: "*", maxSplits: 1, omittingEmptySubsequences: false).first.map(String.init) ?? ""
+
+        let integrityIntStatus = Int(statusIntField.trimmingCharacters(in: .whitespacesAndNewlines))
+        let status = statusField.trimmingCharacters(in: .whitespacesAndNewlines)
+        let integrityStatus = status.isEmpty ? nil : status
+
+        if integrityIntStatus == nil && integrityStatus == nil {
+            return nil
+        }
+
+        return (integrityIntStatus, integrityStatus)
+    }
 }
 
 // MARK: - 4. SwiftUI View
@@ -538,6 +583,17 @@ struct ContentView: View {
     
     private var isConnected: Bool {
         receiver.connectionStatus.contains("Connected")
+    }
+
+    private var integrityStatusColor: Color {
+        switch receiver.currentGnssData.integrityIntStatus {
+        case 1:
+            return .green
+        case 2:
+            return .red
+        default:
+            return .black
+        }
     }
     
     var body: some View {
@@ -624,6 +680,14 @@ struct ContentView: View {
                     value: "\(receiver.currentGnssData.fixType ?? "No Fix")",
                     detail: ""
                 )
+
+                NmeaDataView(
+                    icon: "checkmark.shield",
+                    title: "GNSS Integrity Status",
+                    value: receiver.currentGnssData.integrityStatus ?? "N/A",
+                    detail: "",
+                    valueColor: integrityStatusColor
+                )
             }
             .opacity(receiver.currentGnssData.hasCoreData ? 1.0 : 0.6)
             .padding(.horizontal)
@@ -634,7 +698,7 @@ struct ContentView: View {
             VStack {
                 Divider()
                 Toggle(isOn: $receiver.isAutoConnectEnabled.animation()) {
-                    Label("Auto-Connect to GNSS Receiver", systemImage: "bolt.horizontal.fill")
+                    Label("Auto-open session", systemImage: "bolt.horizontal.fill")
                 }
                 .onChange(of: receiver.isAutoConnectEnabled) { newValue in
                     if newValue {
@@ -667,6 +731,15 @@ struct NmeaDataView: View {
     let title: String
     let value: String
     let detail: String?
+    let valueColor: Color
+
+    init(icon: String, title: String, value: String, detail: String?, valueColor: Color = .primary) {
+        self.icon = icon
+        self.title = title
+        self.value = value
+        self.detail = detail
+        self.valueColor = valueColor
+    }
     
     var body: some View {
         HStack(alignment: .top) {
@@ -683,6 +756,7 @@ struct NmeaDataView: View {
                 Text(value)
                     .font(.system(.body, design: .monospaced))
                     .fontWeight(.medium)
+                    .foregroundColor(valueColor)
                 
                 if let detail = detail {
                     Text(detail)
