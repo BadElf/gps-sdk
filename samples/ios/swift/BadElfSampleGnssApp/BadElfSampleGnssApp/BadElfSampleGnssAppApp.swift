@@ -526,7 +526,8 @@ struct NmeaParser {
         
         let timestamp = components[1].isEmpty ? nil : components[1]
         let speed = Double(components[7])
-        let course = Double(components[8])
+        let trackField = components[8].split(separator: "*", maxSplits: 1, omittingEmptySubsequences: false).first.map(String.init) ?? ""
+        let course = Double(trackField)
         let date = components[9].isEmpty ? nil : components[9]
         
         return NmeaData(
@@ -557,12 +558,13 @@ struct NmeaParser {
         )
     }
 
-    // Parses proprietary PELFINT sentence: $PELFINT,A,B
+    // Parses proprietary PELFINT sentence: $PELFINT,<gps timestamp>,A,B
     static func parsePelfInt(_ components: [String]) -> (integrityIntStatus: Int?, integrityStatus: String?)? {
         guard components.count >= 3 else { return nil }
-        // Field A is second and field B is third. Ignore all trailing fields.
-        let statusIntField = components[1].split(separator: "*", maxSplits: 1, omittingEmptySubsequences: false).first.map(String.init) ?? ""
-        let statusField = components[2].split(separator: "*", maxSplits: 1, omittingEmptySubsequences: false).first.map(String.init) ?? ""
+        // Ignore the optional GPS timestamp in field 1. Ignore all trailing fields.
+        let statusStartIndex = components.count >= 4 ? 2 : 1
+        let statusIntField = components[statusStartIndex].split(separator: "*", maxSplits: 1, omittingEmptySubsequences: false).first.map(String.init) ?? ""
+        let statusField = components[statusStartIndex + 1].split(separator: "*", maxSplits: 1, omittingEmptySubsequences: false).first.map(String.init) ?? ""
 
         let integrityIntStatus = Int(statusIntField.trimmingCharacters(in: .whitespacesAndNewlines))
         let status = statusField.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -594,6 +596,14 @@ struct ContentView: View {
         default:
             return .black
         }
+    }
+
+    private var speedAndTrackValue: String {
+        let speedText = receiver.currentGnssData.speed.map { "\(String(format: "%.1f", $0)) kts" } ?? "N/A"
+        guard let track = receiver.currentGnssData.course else {
+            return speedText
+        }
+        return "\(speedText) / Track \(String(format: "%.1f", track)) deg"
     }
     
     var body: some View {
@@ -663,7 +673,7 @@ struct ContentView: View {
                 NmeaDataView(
                     icon: "figure.walk",
                     title: "Speed",
-                    value: receiver.currentGnssData.speed.map { "\(String(format: "%.1f", $0)) kts" } ?? "N/A",
+                    value: speedAndTrackValue,
                     detail: ""
                 )
                 
