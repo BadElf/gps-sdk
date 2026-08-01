@@ -261,7 +261,7 @@ class BadElfReceiver: NSObject, ObservableObject, StreamDelegate {
             let appId = (bundle.object(forInfoDictionaryKey: "CFBundleIdentifier") as? String) ?? "com.unknown.id"
             let appVersion = (bundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String) ?? "1.0"
             
-            let template = "$PBEJS,{\"method\":\"session\",\"params\":{\"appName\":\"APP_NAME\",\"appId\":\"APP_BUNDLE_ID\",\"appVersion\":\"APP_VERSION\",\"msgs\":\"NMEA,PELFINT\"}}\""
+            let template = "$PBEJS,{\"method\":\"session\",\"params\":{\"appName\":\"APP_NAME\",\"appId\":\"APP_BUNDLE_ID\",\"appVersion\":\"APP_VERSION\",\"msgs\":\"NMEA,PELFINT\"}}"
             let rawString = template
                 .replacingOccurrences(of: "APP_NAME", with: appName)
                 .replacingOccurrences(of: "APP_BUNDLE_ID", with: appId)
